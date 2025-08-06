@@ -2,22 +2,18 @@
 using RevokeMsgPatcher.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace RevokeMsgPatcher.Modifier
 {
-    class QQLiteModifier : AppModifier
+    class QQNTModifier : AppModifier
     {
-        public QQLiteModifier(App config)
+        public QQNTModifier(App config)
         {
             this.config = config;
-        }
-
-        public override void AfterPatchSuccess()
-        {
-        }
-
-        public override void AfterPatchFail()
-        {
         }
 
         /// <summary>
@@ -28,10 +24,20 @@ namespace RevokeMsgPatcher.Modifier
         {
             try
             {
-                string installPath = PathUtil.FindInstallPathFromRegistry("QQLite");
+                string installPath = PathUtil.FindInstallPathFromRegistryWOW6432Node("QQ");
+                if (!string.IsNullOrEmpty(installPath))
+                {
+                    installPath = Path.GetDirectoryName(installPath);
+                    if (IsAllFilesExist(installPath))
+                    {
+                        return installPath;
+                    }
+                }
+            
+                installPath = PathUtil.FindInstallPathFromRegistry("QQNT");
                 if (!IsAllFilesExist(installPath))
                 {
-                    List<string> defaultPathList = PathUtil.GetDefaultInstallPaths(@"Tencent\QQLite");
+                    List<string> defaultPathList = PathUtil.GetDefaultInstallPaths(@"Tencent\QQNT");
                     foreach (string defaultPath in defaultPathList)
                     {
                         if (IsAllFilesExist(defaultPath))
@@ -49,6 +55,7 @@ namespace RevokeMsgPatcher.Modifier
             {
                 Console.WriteLine(e.Message);
             }
+            
             return null;
         }
 
@@ -62,13 +69,29 @@ namespace RevokeMsgPatcher.Modifier
             {
                 foreach (FileHexEditor editor in editors)
                 {
-                    if (editor.FileName == "IM.dll")
+                    if (editor.FileName == "wrapper.node")
                     {
                         return editor.FileVersion;
                     }
                 }
             }
             return "";
+        }
+
+        public override void AfterPatchSuccess()
+        {
+
+        }
+
+        public override void AfterPatchFail()
+        {
+
+        }
+
+        public new bool Restore()
+        {
+            AfterPatchFail();
+            return base.Restore();
         }
     }
 }

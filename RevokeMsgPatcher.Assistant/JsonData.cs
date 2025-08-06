@@ -16,8 +16,8 @@ namespace RevokeMsgPatcher
             return new Bag
             {
                 Apps = AppConfig(),
-                LatestVersion = "1.6",
-                PatchVersion = 20230711,
+                LatestVersion = "2.1",
+                PatchVersion = 20250803,
                 Notice = "",
                 NoticeUrl = "",
             };
@@ -34,9 +34,11 @@ namespace RevokeMsgPatcher
             return new Dictionary<string, App>
             {
                 { "Wechat" , Wechat() },
+                { "Weixin" , Weixin() },
                 { "QQ" , QQ() },
                 { "TIM" , TIM() },
-                { "QQLite" , QQLite() }
+                { "QQLite" , QQLite() },
+                { "QQNT" , QQNT() }
             };
         }
 
@@ -118,8 +120,85 @@ namespace RevokeMsgPatcher
                             new CommonModifyInfo
                             {
                                 Name="WeChatWin.dll",
-                                StartVersion="3.9.6.0",
+                                StartVersion="4.0.3.0",
                                 EndVersion="",
+                                ReplacePatterns = new List<ReplacePattern>
+                                {
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("75 21 48 B8 72 65 76 6F 6B 65 6D 73 48 89 05 3F 3F 3F 3F 66 C7 05 3F 3F 3F 3F 67 00 C6 05 3F 3F 3F 3F 01 48 8D"),
+                                        Replace = ByteUtil.HexStringToByteArray("EB 21 48 B8 72 65 76 6F 6B 65 6D 73 48 89 05 3F 3F 3F 3F 66 C7 05 3F 3F 3F 3F 67 00 C6 05 3F 3F 3F 3F 01 48 8D"),
+                                        Category = "防撤回"
+                                    },
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("55 56 57 53 48 81 EC 3F 3F 3F 3F 48 8D AC 24 3F 3F 3F 3F 48 C7 85 3F 3F 3F 3F FE FF FF FF 48 C7 85 3F 3F 3F 3F 00 00 00 00 B9 60 00 00 00"),
+                                        Replace = ByteUtil.HexStringToByteArray("C3 56 57 53 48 81 EC 3F 3F 3F 3F 48 8D AC 24 3F 3F 3F 3F 48 C7 85 3F 3F 3F 3F FE FF FF FF 48 C7 85 3F 3F 3F 3F 00 00 00 00 B9 60 00 00 00"),
+                                        Category = "多开"
+                                    }
+                                }
+                            },
+                            new CommonModifyInfo
+                            {
+                                Name="WeChatWin.dll",
+                                StartVersion="3.9.11.0",
+                                EndVersion="4.0.3.0",
+                                ReplacePatterns = new List<ReplacePattern>
+                                {
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("0F 1F 44 00 00 49 8B 50 08 48 85 D2 74 3F 48 C7 C1"),
+                                        Replace = ByteUtil.HexStringToByteArray("0F 1F 44 00 00 49 8B 50 08 48 85 D2 75 3F 48 C7 C1"),
+                                        Category = "防撤回(老)"
+                                    },
+                                    // 带撤回提示
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("4D 85 C0 0F 84 3F 3F 3F 3F EB BF 41 8B"),
+                                        Replace = ByteUtil.HexStringToByteArray("4D 85 C0 0F 84 3F 3F 3F 3F 90 90 41 8B"),
+                                        Category = "防撤回带提示(新)"
+                                    },
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("45 32 F6 4C 8D 25 3F 3F 3F 3F 48 85 C0 0F 84"),
+                                        Replace = ByteUtil.HexStringToByteArray("45 32 F6 4C 8D 25 3F 3F 3F 3F 48 85 C0 90 E9"),
+                                        Category = "多开"
+                                    }
+                                }
+                            },
+                            new CommonModifyInfo
+                            {
+                                Name="WeChatWin.dll",
+                                StartVersion="3.9.9.0",
+                                EndVersion="3.9.11.0",
+                                ReplacePatterns = new List<ReplacePattern>
+                                {
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("0F 1F 44 00 00 49 8B 50 08 48 85 D2 74 3F 48 C7 C1"),
+                                        Replace = ByteUtil.HexStringToByteArray("0F 1F 44 00 00 49 8B 50 08 48 85 D2 75 3F 48 C7 C1"),
+                                        Category = "防撤回(老)"
+                                    },
+                                    // 带撤回提示
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("4D 85 C0 0F 84 3F 3F 3F 3F EB BF 41 8B"),
+                                        Replace = ByteUtil.HexStringToByteArray("4D 85 C0 0F 84 3F 3F 3F 3F 90 90 41 8B"),
+                                        Category = "防撤回带提示(新)"
+                                    },
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("01 3D B7 00 00 00 0F 85 3F 3F 3F 3F 48 8B CF"),
+                                        Replace = ByteUtil.HexStringToByteArray("01 3D B7 00 00 00 90 E9 3F 3F 3F 3F 48 8B CF"),
+                                        Category = "多开"
+                                    }
+                                }
+                            },
+                            new CommonModifyInfo
+                            {
+                                Name="WeChatWin.dll",
+                                StartVersion="3.9.6.0",
+                                EndVersion="3.9.9.0",
                                 ReplacePatterns = new List<ReplacePattern>
                                 {
                                     new ReplacePattern
@@ -1281,6 +1360,122 @@ namespace RevokeMsgPatcher
                                         Position = 0x000248B9,
                                         Content = new byte[] { 0xEB, 0x02, 0x90, 0x90 }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+
+        public App QQNT()
+        {
+            return new App
+            {
+                Name = "QQNT",
+                FileTargetInfos = new Dictionary<string, TargetInfo>
+                {
+                    {
+                        "wrapper.node",
+                        new TargetInfo
+                        {
+                            Name = "wrapper.node",
+                            RelativePath = @"versions\{version}\resources\app\wrapper.node",
+                            RelativePathForVersion = "QQ.exe"
+                        }
+                    }
+                },
+                FileCommonModifyInfos = new Dictionary<string, List<CommonModifyInfo>>
+                {
+                    {
+                        "wrapper.node",
+                        new List<CommonModifyInfo>
+                        {
+                            new CommonModifyInfo
+                            {
+                                Name="wrapper.node",
+                                StartVersion="9.8.0.19000",
+                                EndVersion="",
+                                ReplacePatterns = new List<ReplacePattern>
+                                {
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("48 8B 95 3F 3F 3F 3F 4C 8B 85 3F 3F 3F 3F 4C 89 C0 48 29 D0 48 83 F8 07 0F 87"),
+                                        Replace = ByteUtil.HexStringToByteArray("48 8B 95 3F 3F 3F 3F 4C 8B 85 3F 3F 3F 3F 4C 89 C0 48 29 D0 48 83 F8 07 0F 86"),
+                                        Category = "群聊防撤回"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        public App Weixin()
+        {
+            return new App
+            {
+                Name = "Weixin",
+                FileTargetInfos = new Dictionary<string, TargetInfo>
+                {
+                    {
+                        "Weixin.dll",
+                        new TargetInfo
+                        {
+                            Name = "Weixin.dll",
+                            RelativePath = "Weixin.dll",
+                            StartVersion = "1.0.0.0"
+                        }
+                    }
+                },
+                FileCommonModifyInfos = new Dictionary<string, List<CommonModifyInfo>>
+                {
+                    {
+                        "Weixin.dll",
+                        new List<CommonModifyInfo>
+                        {
+                            new CommonModifyInfo
+                            {
+                                Name="Weixin.dll",
+                                StartVersion="4.0.3.0",
+                                EndVersion="",
+                                ReplacePatterns = new List<ReplacePattern>
+                                {
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("75 21 48 B8 72 65 76 6F 6B 65 6D 73 48 89 05 3F 3F 3F 3F 66 C7 05 3F 3F 3F 3F 67 00 C6 05 3F 3F 3F 3F 01 48 8D"),
+                                        Replace = ByteUtil.HexStringToByteArray("EB 21 48 B8 72 65 76 6F 6B 65 6D 73 48 89 05 3F 3F 3F 3F 66 C7 05 3F 3F 3F 3F 67 00 C6 05 3F 3F 3F 3F 01 48 8D"),
+                                        Category = "防撤回"
+                                    },
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("55 56 57 53 48 81 EC 3F 3F 3F 3F 48 8D AC 24 3F 3F 3F 3F 48 C7 85 3F 3F 3F 3F FE FF FF FF 48 C7 85 3F 3F 3F 3F 00 00 00 00 B9 60 00 00 00"),
+                                        Replace = ByteUtil.HexStringToByteArray("C3 56 57 53 48 81 EC 3F 3F 3F 3F 48 8D AC 24 3F 3F 3F 3F 48 C7 85 3F 3F 3F 3F FE FF FF FF 48 C7 85 3F 3F 3F 3F 00 00 00 00 B9 60 00 00 00"),
+                                        Category = "多开"
+                                    }
+                                }
+                            },
+                            new CommonModifyInfo
+                            {
+                                Name="Weixin.dll",
+                                StartVersion="4.0.0.0",
+                                EndVersion="4.0.3.0",
+                                ReplacePatterns = new List<ReplacePattern>
+                                {
+                                    new ReplacePattern
+                                    {
+                                        Search = ByteUtil.HexStringToByteArray("57 53 48 83 EC 20 48 89 CE 80 3D 3F 3F 3F 3F 00 75 21 48 B8"),
+                                        Replace = ByteUtil.HexStringToByteArray("57 53 48 83 EC 20 48 89 CE 80 3D 3F 3F 3F 3F 00 EB 21 48 B8"),
+                                        Category = "防撤回"
+                                    },
+                                    // new ReplacePattern
+                                    // {
+                                    //     Search = ByteUtil.HexStringToByteArray("BA 01 00 00 00 E8 3F 3F 3F 00 85 C0 0F 84 3F 03 00"),
+                                    //     Replace = ByteUtil.HexStringToByteArray("BA 01 00 00 00 E8 3F 3F 3F 00 85 C0 E9 50 03 00 00"),
+                                    //     Category = "多开"
+                                    // }
                                 }
                             }
                         }
